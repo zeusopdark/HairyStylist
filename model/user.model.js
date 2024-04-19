@@ -19,7 +19,11 @@ const UserSchema = new mongoose.Schema({
     },
     gender: {
         type: String
+    },
+    profilePic: {
+        type: String
     }
-});
+
+}, { timestamps: true });
 const User = mongoose.Model.Users || mongoose.model("User", UserSchema);
 export default User;

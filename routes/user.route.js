@@ -23,6 +23,4 @@ router.put("/updateUser", verifyUser, updateUser);
 
 router.put("/resetpassword", resetpassword);
 
-
-
 export default router;

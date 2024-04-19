@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import morgan from "morgan"
 import mongoose from "mongoose"
 import userRoutes from "./routes/user.route.js"
+import barberRoutes from "./routes/barber.route.js"
 import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOption));
 app.use(morgan('tiny'));
 app.use("/api/user", userRoutes)
+app.use("/api/barber", barberRoutes);
 
 
 app.get("/", (req, res) => {
