@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String
+    },
+    isBarber: {
+        type: Boolean,
+        default: false
     }
 
 }, { timestamps: true });
