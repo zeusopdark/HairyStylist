@@ -46,7 +46,6 @@ export const registerUser = async (req, res, next) => {
     }
 
 }
-
 export const loginUser = async (req, res, next) => {
     try {
         const { phoneNumber } = req.body;
@@ -71,7 +70,6 @@ export const generateOtp = async (req, res, next) => {
         otp: OTP
     }
     req.app.locals.otp = OTP
-    req.app.locals.resetSession = true;
     const phone = options.phone.replace("+", "");
     try {
         const url = `https://smsgw.tatatel.co.in:9095/campaignService/campaigns/qs?dr=false&sender=FRICOZ&recipient=${phone}&msg=Dear Customer, Your OTP for mobile number verification is ${options.otp}. Please do not share this OTP to anyone - Firstricoz Pvt. Ltd.&user=FIRSTR&pswd=First^01&PE_ID=1601832170235925649&Template_ID=1607100000000306120`;
