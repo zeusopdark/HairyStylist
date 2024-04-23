@@ -5,17 +5,16 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide FullName"],
     },
-    password: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: [true, "Please provide a unique email"],
-        unique: true
-    },
     phoneNumber: {
-        type: Number
+        type: String,
+        required: [true, "Please provide phone number"],
+        unique: [true, "Please provide unique phone number"],
+        validate: {
+            validator: function (v) {
+                return v.length === 12;
+            },
+            message: props => `${props.value} is not a valid phone number.`
+        }
     },
     gender: {
         type: String

@@ -11,7 +11,6 @@ export const verifyUser = (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
         req.id = decodedToken.userId;
-
         next();
     } catch (error) {
         return res.status(403).json({ message: "Invalid cookie" });

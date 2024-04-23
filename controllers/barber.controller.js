@@ -2,8 +2,6 @@ import mongoose from "mongoose";
 import { geocodeAddress } from "../helper/map.js";
 import Barber from "../model/barber.model.js";
 
-
-
 //find barber by id need to send the user id.
 export const findBarberById = async (req, res, next) => {
     const { id } = req.params;
