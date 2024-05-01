@@ -22,41 +22,56 @@ export const getUserDetails = async (req, res, next) => {
 }
 export const registerUser = async (req, res, next) => {
     try {
-        const { phone, fullname } = req.body;
-        // Checking if  phoneNumber already exists
-        const p = phone.replace("+", "");
-        console.log(p);
-        const user = await User.findOne({ phoneNumber: p });
-        if (user) {
-            return res.status(400).json({ error: "Phone Number already exists." });
+        // Checking if phoneNumber exists in req.app.locals
+        const phoneNumber = req.app.locals.phone;
+        if (!phoneNumber) {
+            return res.status(401).json({ error: "Please login first.", success: false });
+        }
+        const phone = phoneNumber.replace("+", "");
+        // Creating an object with required fields and their values
+        const userFields = {
+            fullname: req.body.fullname,
+            phoneNumber: phone,
+            email: req.body.email
+        };
+
+        // Adding optional fields if provided in the request body
+        if (req.body.gender) {
+            userFields.gender = req.body.gender;
+        }
+        if (req.body.profilePic) {
+            userFields.profilePic = req.body.profilePic;
+        }
+        if (req.body.address) {
+            userFields.address = req.body.address;
         }
 
-        // Saving user to the database
-        const newUser = new User({
-            phoneNumber: p,
-            fullname
-        })
-        await newUser.save();
+        // Creating a new user instance with the combined fields
+        const newUser = new User(userFields);
 
-        return res.status(201).json({ message: "User registered successfully." });
+        // Saving the new user to the database
+        const user = await newUser.save();
+        const token = jwt.sign({
+            userId: user._id,
+        }, process.env.JWT_SECRET, { expiresIn: "24h" })
+
+        res.cookie('token', token);
+
+        return res.status(201).json({ message: "User registered successfully.", success: true, token });
 
     } catch (err) {
         console.error("Error:", err);
-        return res.status(500).json({ error: "Internal Server Error", err });
+        return res.status(422).json({ error: "Internal Server Error", err });
     }
 
 }
+
 export const loginUser = async (req, res, next) => {
     try {
         const { phoneNumber } = req.body;
-        const checkPhone = phoneNumber.replace("+", "");
-        const user = await User.findOne({ phoneNumber: checkPhone });
-        if (!user) {
-            return res.status(404).json({ message: "Phone number not registered.", success: false })
-        }
-        req.app.locals.id = user._id;
+        if (!phoneNumber) return res.status(400).json({ message: "Phone number required", success: false });
         req.app.locals.phone = phoneNumber
-        console.log(req.app.locals.id);
+
         return res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, err })
@@ -83,13 +98,18 @@ export const verifyOTP = async (req, res, next) => {
     try {
         const { code } = req.query;
         if (parseInt(req.app.locals.otp) === parseInt(code)) {
+            const phone = req.app.locals.phone;
+            const p = phone.replace("+", "");
+            const user = await User.findOne({ phoneNumber: p });
+            if (!user) {
+                return res.status(200).json({ message: "Register Please...!", success: false });
+            }
             const token = jwt.sign({
-                userId: req.app.locals.id,
+                userId: user._id,
             }, process.env.JWT_SECRET, { expiresIn: "24h" })
-            console.log(token);
 
             res.cookie('token', token);
-            return res.status(201).json({ message: "OTP verified successfully", success: true });
+            return res.status(201).json({ message: "OTP verified successfully User Logged in successful", success: true, token });
         }
         return res.status(400).json({ message: "Invalid OTP", success: false });
     } catch (err) {
@@ -98,4 +118,8 @@ export const verifyOTP = async (req, res, next) => {
 }
 export const updateUser = (req, res, next) => {
     return res.status(200).json({ message: "Working" });
+}
+
+const generateToken = ({ id }) => {
+
 }

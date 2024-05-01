@@ -22,9 +22,13 @@ const UserSchema = new mongoose.Schema({
     profilePic: {
         type: String
     },
-    isBarber: {
-        type: Boolean,
-        default: false
+    email: {
+        type: String,
+        unique: [true, "Please provide the correct email"],
+        required: true
+    },
+    address: {
+        type: String
     }
 
 }, { timestamps: true });
