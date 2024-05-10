@@ -119,7 +119,3 @@ export const verifyOTP = async (req, res, next) => {
 export const updateUser = (req, res, next) => {
     return res.status(200).json({ message: "Working" });
 }
-
-const generateToken = ({ id }) => {
-
-}

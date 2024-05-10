@@ -2,9 +2,25 @@ import mongoose from "mongoose";
 
 // Defining the schema for the Barber model
 const barberSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
+        type: String,
+        required: true
+    },
+    DOB: {
+        type: Date,
+        required: true
+    },
+    mobile: {
+        type: Number,
+        required: true,
+        unique: [true, "Please provide unique mobile number"]
+    },
+    city: {
+        type: String,
         required: true
     },
     location: {
@@ -18,29 +34,15 @@ const barberSchema = new mongoose.Schema({
             required: true
         }
     },
-    place: {
+    address: {
         type: String,
         require: true
     },
-    about: {
-        type: String
+    languages: {
+        type: Array
     },
-    contactInformation: {
-        type: [
-            {
-                phoneNumber: { type: String },
-                whatsappNumber: { type: String },
-                instagram: { type: String }
-            }
-        ],
-        validate: [arrayLimit, '{PATH} exceeds the limit of 3']
-    },
-    rate: {
-        type: Number
-    },
-    isAvailable: {
-        type: Boolean,
-        default: true
+    profilePic: {
+        type: String,
     },
     rating: {
         type: Number,
@@ -72,11 +74,6 @@ const barberSchema = new mongoose.Schema({
         }
     ]
 });
-
-// Custom validator function to limit the size of the contactInformation array to 3
-function arrayLimit(val) {
-    return val.length <= 3;
-}
 
 // Indexing the location field for geospatial queries
 barberSchema.index({ location: '2dsphere' });
