@@ -15,9 +15,15 @@ const barberSchema = new mongoose.Schema({
         required: true
     },
     mobile: {
-        type: Number,
-        required: true,
-        unique: [true, "Please provide unique mobile number"]
+        type: String,
+        required: [true, "Please provide phone number"],
+        unique: [true, "Please provide unique phone number"],
+        validate: {
+            validator: function (v) {
+                return v.length === 12;
+            },
+            message: props => `${props.value} is not a valid phone number.`
+        }
     },
     city: {
         type: String,
@@ -39,7 +45,18 @@ const barberSchema = new mongoose.Schema({
         require: true
     },
     languages: {
-        type: Array
+        type: Array,
+        default: []
+    },
+    services: {
+        type: [
+            {
+                type: String,
+                enum: ["haircut", "nails", "facial", "coloring", "facepack"]
+            }
+        ],
+        default: []
+
     },
     profilePic: {
         type: String,

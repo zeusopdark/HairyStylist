@@ -7,14 +7,20 @@ import Barber from "../model/barber.model.js";
 export const registerBarber = async (req, res, next) => {
     try {
         // Extracting data from the request body
-        const { firstname, lastname, DOB, mobile, city, address, languages, profilePic } = req.body;
+        const { firstname, lastname, DOB, mobile, city, address, languages, profilePic, services } = req.body;
 
         // Checking for required fields
         if (!firstname || !lastname || !DOB || !mobile || !city || !address) {
             return res.status(400).json({ success: false, message: "Please provide all required fields" });
         }
+        // Checking if services contain valid values
+        const validServices = ["haircut", "nails", "facial", "coloring", "facepack"];
+        const invalidServices = services.filter(service => !validServices.includes(service));
+        if (invalidServices.length > 0) {
+            return res.status(400).json({ success: false, message: `Invalid services provided: ${invalidServices.join(", ")}` });
+        }
 
-        const { longitude, latitude } = await geocodeAddress(address); // Assuming you have a function to geocode the address
+        const { longitude, latitude } = await geocodeAddress(address);
 
         // Creating a new Barber instance
         const newBarber = new Barber({
