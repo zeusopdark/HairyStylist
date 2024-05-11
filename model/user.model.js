@@ -16,6 +16,17 @@ const UserSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid phone number.`
         }
     },
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'], // Only accept 'Point' as the value
+            required: true
+        },
+        coordinates: {
+            type: [Number], // Array of numbers [longitude, latitude]
+            required: true
+        }
+    },
     gender: {
         type: String
     },

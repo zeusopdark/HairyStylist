@@ -1,16 +1,21 @@
 import mongoose from "mongoose";
-import { geocodeAddress } from "../helper/map.js";
+import { geocodeAddress, getReverseGeocode } from "../helper/map.js";
 import Barber from "../model/barber.model.js";
-
+import jwt from "jsonwebtoken"
+import otpgenerator from "otp-generator"
 
 //barber registeration
 export const registerBarber = async (req, res, next) => {
     try {
         // Extracting data from the request body
-        const { firstname, lastname, DOB, mobile, city, address, languages, profilePic, services } = req.body;
-
+        const { firstname, lastname, DOB, city, address, languages, profilePic, services } = req.body;
+        const phoneNumber = req.app.locals.phone;
+        if (!phoneNumber) {
+            return res.status(401).json({ error: "Please login first.", success: false });
+        }
+        const phone = phoneNumber.replace("+", "");
         // Checking for required fields
-        if (!firstname || !lastname || !DOB || !mobile || !city || !address) {
+        if (!firstname || !lastname || !DOB || !city || !address) {
             return res.status(400).json({ success: false, message: "Please provide all required fields" });
         }
         // Checking if services contain valid values
@@ -21,13 +26,14 @@ export const registerBarber = async (req, res, next) => {
         }
 
         const { longitude, latitude } = await geocodeAddress(address);
-
+        // console.log(latitude, longitude);
+        // const dat = await getReverseGeocode(latitude, longitude);
         // Creating a new Barber instance
         const newBarber = new Barber({
             firstname,
             lastname,
             DOB,
-            mobile,
+            mobile: phone,
             city,
             location: {
                 type: "Point",
@@ -39,7 +45,7 @@ export const registerBarber = async (req, res, next) => {
         });
         const savedBarber = await newBarber.save();
         const token = jwt.sign({
-            userId: user._id,
+            userId: savedBarber._id,
         }, process.env.JWT_SECRET, { expiresIn: "24h" })
 
         res.cookie('token', token);

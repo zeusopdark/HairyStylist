@@ -4,7 +4,7 @@ import { verifyUser } from "../middlewares/verifyUser.js";
 
 const router = Router();
 
-router.get("/verifyotp", verifyOTP)
+router.get("/verifyotp", verifyOTP);
 router.get("/generateotp", generateOtp);
 router.get("/getbarberbyid/:id", findBarberById);
 router.get("/getallbarber", getAllBarbers);
